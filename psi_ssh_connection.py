@@ -57,7 +57,7 @@ class SSHConnection(object):
 
     def connect(self):
         self.ssh = pexpect.spawn(self.command_line())
-        print self.command_line()
+        print(self.command_line())
         # Print ssh output:
         #self.ssh.logfile_read = sys.stdout
         #Something was not right in here. so I touched it a bit
@@ -66,10 +66,10 @@ class SSHConnection(object):
             self.ssh.sendline('yes')
             self.ssh.expect('password:')
             self.ssh.sendline(self.password)
-            print "I've sent password: " + self.password
+            print("I've sent password: " + self.password)
         else:
             self.ssh.sendline(self.password)
-            print "Ive sent password: " + self.password
+            print("Ive sent password: " + self.password)
 
     def test_connection(self):
         MAX_WAIT_SECONDS = 10
@@ -81,7 +81,7 @@ class SSHConnection(object):
                     time.sleep(1)
                 else:
                     raise
-        print '\nYour SOCKS proxy is now running at %s:%d' % (self.listen_address, self.listen_port)
+        print('\nYour SOCKS proxy is now running at %s:%d') % (self.listen_address, self.listen_port)
 
     def disconnect_on_success(self, test_site=False):
         try:
@@ -89,24 +89,24 @@ class SSHConnection(object):
             if test_site:
                 import psi_website_checker
                 response = psi_website_checker.check_default_sites()
-                print 'Site Response %s' % (response)   
+                print('Site Response %s') % (response)   
             if response != 200:
-                print 'FAILED!'
+                print('FAILED!')
             self.disconnect()
         except ImportError as error:
-            print 'Failed importing module: %s' % str(error)
+            print('Failed importing module: %s' % str(error))
             raise error
         except Exception as error:
-            print 'Failed: %s' % str(error)
+            print('Failed: %s') % str(error)
 
     def wait_for_disconnect(self):
         self.ssh.wait()
         raise Exception('SSH disconnected unexpectedly')
 
     def disconnect(self):
-        print 'Terminating...'
+        print('Terminating...')
         self.ssh.terminate()
-        print 'Connection closed'
+        print('Connection closed')
 
 
 class OSSHConnection(SSHConnection):
