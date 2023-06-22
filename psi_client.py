@@ -82,7 +82,7 @@ class Data(object):
                     try:
                         temp2["servers"].append(temp['servers'][number-1])
                     except (IOError, ValueError, KeyError, IndexError, TypeError) as error:
-                        print '\nNot a valid server number\n'
+                        print('\nNot a valid server number\n')
                         sys.exit(2)
                     data=Data(temp2)
             # Validate
@@ -91,7 +91,7 @@ class Data(object):
             data.sponsor_id()
 
         except (IOError, ValueError, KeyError, IndexError, TypeError) as error:
-            print '\nRequested Servers Not Present\n'
+            print('\nRequested Servers Not Present\n')
             sys.exit(2)
         return data
 
@@ -104,7 +104,7 @@ class Data(object):
             
             for i in currdata["servers"]:
                 if i not in tempdata["servers"]:
-                    print "New server Found!!!! Appending....."
+                    print("New server Found!!!! Appending.....")
                     tempdata["servers"].append(i)
                     
         with open('servers.new', 'w') as data_file:
@@ -143,10 +143,10 @@ def do_handshake(server, data, relay):
 def print_sponsor_message(handshake_response):
     home_pages = handshake_response['Homepage']
     if len(home_pages) > 0:
-        print '\nPlease visit our sponsor\'s homepage%s:' % ('s' if len(home_pages) > 1 else '',)
+        print('\nPlease visit our sponsor\'s homepage%s:') % ('s' if len(home_pages) > 1 else '',)
     for home_page in home_pages:
-        print home_page
-    print ''
+        print(home_page)
+    print('')
 
 
 def make_ssh_connection(server, relay, bind_all):
@@ -175,8 +175,8 @@ def connect_to_server(data, relay, bind_all, test=False):
 
     if server.relay_not_supported(relay):
         raise Exception('Server does not support %s' % relay)
-        print (server.ip_address)
-        print (server.extended_config)
+        print(server.ip_address)
+        print(server.extended_config)
         server
     #Looks like We cannot use handshaking method anymore
     #but it works without handshake so I will just comment it
@@ -196,7 +196,7 @@ def connect_to_server(data, relay, bind_all, test=False):
             handshake_response = do_handshake(server, data, relay)
             handshake_performed = True
         except Exception as e:
-            print 'DEBUG: handshake request: ' + str(e)
+            print('DEBUG: handshake request: ' + str(e))
 
     connected_performed = False
     if handshake_performed:
@@ -205,7 +205,7 @@ def connect_to_server(data, relay, bind_all, test=False):
             server.connected(relay)
             connected_performed = True
         except Exception as e:
-            print 'DEBUG: connected request: ' + str(e)
+            print('DEBUG: connected request: ' + str(e))
     with open('servers.dat','r') as serv_file:
         tempdata=json.loads(serv_file.read())
         top_index = tempdata["servers"].index(data.servers()[0])
@@ -214,11 +214,11 @@ def connect_to_server(data, relay, bind_all, test=False):
         data_file.write(json.dumps(tempdata))
     os.rename('servers.new', 'servers.dat');
     if test:
-        print 'Testing connection to ip %s' % server.ip_address
+        print('Testing connection to ip %s' % server.ip_address)
         ssh_connection.disconnect_on_success(test_site=test)
     else:
         print("SERVER CONNECTED :: " + str(server.extended_config['region']))
-        print "IP Address :" + str(server.ip_address)
+        print("IP Address :" + str(server.ip_address))
         #For redsocks
         curr=dict()
         if(SOCKS_PORT == 1080):
@@ -227,7 +227,7 @@ def connect_to_server(data, relay, bind_all, test=False):
                 curr["port"]=SOCKS_PORT
                 cc.write(json.dumps(curr))
         #For redsocks
-        print 'Press Ctrl-C to terminate.'
+        print('Press Ctrl-C to terminate.')
         try:
             ssh_connection.wait_for_disconnect()
         except KeyboardInterrupt as e:
@@ -235,7 +235,7 @@ def connect_to_server(data, relay, bind_all, test=False):
                 try:
                     server.disconnected(relay)
                 except Exception as e:
-                    print 'DEBUG: disconnected request: ' + str(e)
+                    print('DEBUG: disconnected request: ' + str(e))
             ssh_connection.disconnect()
 
 
@@ -262,7 +262,7 @@ def connect(bind_all,copy="", test=False):
         ob=json.loads(top[loc:].decode('hex'))"""
         ob = json.loads(top.decode('hex').split()[-1])
         
-        print "Trying to connect to "+ob["region"]+" : " + ob["ipAddress"]
+        print("Trying to connect to "+ob["region"]+" : " + ob["ipAddress"])
 
 
         try:
@@ -272,22 +272,22 @@ def connect(bind_all,copy="", test=False):
             if _test_executable(ossh_path):
                 relay = 'OSSH'
             else:
-                print '%s is not a valid executable. Using standard ssh.' % (ossh_path,)
+                print('%s is not a valid executable. Using standard ssh.' % (ossh_path,))
 
             connect_to_server(data, relay, bind_all, test)
             break
         except Exception as error:
-            print 'DEBUG: %s connection: %s' % (relay, str(error))
+            print('DEBUG: %s connection: %s' % (relay, str(error)))
             server = Psiphon3Server(data.servers(), data.propagation_channel_id(), data.sponsor_id(), CLIENT_VERSION, CLIENT_PLATFORM)
             
             
             if test:
                 break
             if not data.move_first_server_entry_to_bottom():
-                print 'DEBUG: could not reorder servers'
+                print('DEBUG: could not reorder servers')
                 
             #data.save()
-            print 'Trying next server...'
+            print('Trying next server...')
 
 
 def test_all_servers(bind_all=False):
@@ -295,9 +295,9 @@ def test_all_servers(bind_all=False):
     data = Data.load()
     for _ in data.servers():
         connect(bind_all,data, test=True)
-        print 'DEBUG: moving server to bottom'
+        print('DEBUG: moving server to bottom')
         if not data.move_first_server_entry_to_bottom():
-            print "could not reorder servers"
+            print("could not reorder servers")
             break
         data.save()
 def update():
@@ -337,7 +337,7 @@ def showall(reg="ANY"):
 
             data = json.loads(data_file.read())
             i=0
-            print "\nNumber\tIP\t\tRegion\tOSSH\tPort-53"
+            print("\nNumber\tIP\t\tRegion\tOSSH\tPort-53")
             for ser in data['servers']:
                 loc = ser.find('{"webServerCertificate":'.encode('hex'))
                 ob=json.loads(ser[loc:].decode('hex'))
@@ -345,17 +345,17 @@ def showall(reg="ANY"):
                     continue
                 regions.add(ob['region'])
                 i=i+1
-                print (str(i) +"\t"+ ob['ipAddress'] + "\t" + ob['region'] +"\t" + str("OSSH" in ob['capabilities']) +"\t"+ str(ob["sshObfuscatedPort"] == 53))
+                print(str(i) +"\t"+ ob['ipAddress'] + "\t" + ob['region'] +"\t" + str("OSSH" in ob['capabilities']) +"\t"+ str(ob["sshObfuscatedPort"] == 53))
             
-            print regions
+            print(regions)
     except (IOError, ValueError, KeyError, IndexError, TypeError) as error:
-        print '\nDoes Not Exist.\n'
+        print('\nDoes Not Exist.\n')
         sys.exit(2)
 def updatepsiclient():
 
     url="https://github.com/thispc/psiphon/archive/master.zip"
-    print "\nThis may take some time. Keep your net ON!\n"
-    print url
+    print("\nThis may take some time. Keep your net ON!\n")
+    print(url)
     wget.download(url)
     os.system("unzip psiphon-master.zip")
     os.rename('ssh','ssh.back')
@@ -393,13 +393,13 @@ def save_a_server(j):
             if spec not in tempdata["servers"]: 
                 tempdata["servers"].append(spec);
             else:
-                print 
+                print()
                 raise ValueError("Saved before Already")
             with open("saved_servers.dat","w") as s:
                 s.write(json.dumps(tempdata))
-        print "Successfully Saved "+str(i)+" server"
+        print("Successfully Saved "+str(i)+" server")
     except (IOError, ValueError, KeyError, IndexError, TypeError) as error:
-        print '\nError in saving..exiting...\n'
+        print('\nError in saving..exiting...\n')
         sys.exit(2)
 
 def remove_saved_server(j):
@@ -410,16 +410,16 @@ def remove_saved_server(j):
             del data["servers"][j-1]
         with open("saved_servers.dat", 'w') as data_file:
             data_file.write(json.dumps(data))
-        print "\nSuccessfully deleted "+str(j)+" server from saved servers\n"
+        print("\nSuccessfully deleted "+str(j)+" server from saved servers\n")
     except (IOError, ValueError, KeyError, IndexError, TypeError) as error:
-        print '\nError in deleting..exiting...\n'
+        print('\nError in deleting..exiting...\n')
         sys.exit(2)
 def clear_saved_server():
     try:
         os.remove("saved_servers.dat")
-        print "Cleared Saved servers"
+        print("Cleared Saved servers")
     except (OSError,IOError) as error:
-        print "Already Empty"    
+        print("Already Empty")
 
 if __name__ == "__main__":
     
