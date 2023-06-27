@@ -1,0 +1,77 @@
+{
+    "log": {
+        "loglevel": "error"
+    },
+    "inbounds": [
+        {
+            "tag": "socks-in",
+            "port": 443,
+            "listen": "127.0.0.1",
+            "protocol": "socks",
+            "settings": {
+                "auth": "noauth",
+                "udp": false,
+                "ip": "127.0.0.1"
+            }
+        },
+        {
+            "tag": "http-in",
+            "port": 8123,
+            "listen": "::",
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vmess",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "sg3.securev2ray.com",
+                        "port": 443,
+                        "users": [
+                            {
+                                "email": "user@v2ray.com",
+                                "id": "a762eb9b-646a-41ab-a570-1b26a7f503ad",
+                                "alterId": 0,
+                                "security": "auto"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "ws",
+                "security": "tls",
+                "tlsSettings": {
+                    "allowInsecure": true,
+                    "serverName": "sg3.securev2ray.com"
+                },
+                "wsSettings": {
+                    "connectionReuse": true,
+                    "path": "/vmess",
+                    "headers": {
+                        "Host": "sg3.securev2ray.com"
+                    }
+                }
+            },
+            "mux": {
+                "enabled": true
+            },
+            "tag": "proxy"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct",
+            "settings": {
+                "domainStrategy": "UseIP"
+            }
+        }
+    ],
+    "dns": {
+        "servers": [
+            "1.0.0.1",
+            "localhost"
+        ]
+    }
+}
